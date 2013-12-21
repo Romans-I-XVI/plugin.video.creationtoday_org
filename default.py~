@@ -41,7 +41,7 @@ play = addon.queries.get('play', None)
 
 def MAIN():
 	addDir('Creation Today', base_url + '/category/type/video/podcasts/',1,'')
-	addDir('Creation Minute', 'https://www.youtube.com/playlist?list=PLvFrrGonrTSOO8_ZtChPQrBxx4MSla9Qb',2,'')
+	addDir('Creation Minute', 'http://www.creationminute.com',2,'')
 
 
 def Creation_Today(url):
@@ -51,6 +51,7 @@ def Creation_Today(url):
 	thumb=re.compile('<img src="(.+?)" width="150" height="94" alt="" />').findall(link)
 	mylist=zip((match),(title),(thumb))
 	for url,title,thumb in mylist:
+		title=title.replace("&#8211;","")
 		addDir(title, url, 10, thumb)
 		#url = GETSOURCE(url)
 		#try:
@@ -72,15 +73,14 @@ def Creation_Today(url):
 
 	
 def Creation_Minute(url):
-	link = getUrl(url)	
-	match=re.compile('watch?v=(.+?)').findall(link)
-	title=re.compile('<a class=".+?" href="/watch?v=.+?">(.+?)</a>').findall(link)
+	link = getUrl(url)
+	match=re.compile('<a href="http://www.youtube.+?embed/(.+?)rel').findall(link)
+	title=re.compile('<h5 style="color:white; margin-bottom:0px;">(.+?)</h5>').findall(link)
 	mylist=zip((match),(title))
-	xbmc.log(str(match))
 	for match,title in mylist:
-		xbmc.log('http://www.youtube.com/watch?v='+match)
-		addon.add_video_item({'url': 'http://www.youtube.com/watch?v='+match},
-		{'title': title})
+		match=match[:-1]
+		xbmc.log('test123'+match)
+		addon.add_video_item({'url': 'http://www.youtube.com/watch=?v' + match},{'title': title})
 
 
 
@@ -106,12 +106,29 @@ def getUrl(url):
         response.close()
 	return link
 
-def GETSOURCE(url):
+def GETSOURCE(url,name,iconimage):
 	link = getUrl(url)
-	match=re.compile('<iframe src="http://player.vimeo.com/video/(.+?)title').findall(link)
-	match=match[0]
-	addon.add_item({'url': 'http://www.vimeo.com/' + match},
-	{'title': 'test'})
+	match_vimeo=re.compile('<iframe src="http://player.vimeo.com/video/(.+?)title').findall(link)
+	match_youtube=re.compile('src=".+?www.youtube.+?embed/(.+?)rel').findall(link)
+	try:
+		match_vimeo=match_vimeo[0]
+		site=0
+	except:
+		match_youtube=match_youtube[0]
+		match_youtube=match_youtube[:-1]
+		site=1
+	if site==0:
+		match=addon.resolve_item({'url': 'http://www.vimeo.com/' + match_vimeo})
+	if site==1:
+		match=addon.resolve_item({'url': 'http://www.youtube.com/watch?v=' + match_youtube})
+	liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+	liz.setInfo(type="Video", infoLabels={ "title": name} )
+	xbmc.Player().play(match,liz)
+	xbmc.sleep(2500)
+	while xbmc.Player().isPlaying():
+		xbmc.sleep(250)
+	xbmc.Player().stop()
+	sys.exit()  
 
 def get_params():
         param=[]
@@ -143,7 +160,7 @@ def addLink(name,url,iconimage):
 ##################################################################################################################################
 
 def addDir(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
+        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
@@ -156,6 +173,7 @@ def addDir(name,url,mode,iconimage):
 params=get_params()
 url=None
 name=None
+iconimage=None
 mode=None
 
 try:
@@ -164,6 +182,10 @@ except:
         pass
 try:
         name=urllib.unquote_plus(params["name"])
+except:
+        pass
+try:
+        iconimage=urllib.unquote_plus(params["iconimage"])
 except:
         pass
 try:
@@ -217,7 +239,7 @@ elif mode==9:
 
 elif mode==10:
         print ""+url
-        GETSOURCE(url)
+        GETSOURCE(url,name,iconimage)
 elif mode==11:
         print ""+url
         PREVIOUS()

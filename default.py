@@ -21,7 +21,7 @@ play = addon.queries.get('play', None)
 
 
 def MAIN():
-	addDir('Creation Today Show', 'http://feeds.drdino.com/csepodcast?format=xml',4,'')	
+	addDir('Creation Today Show', '',1,'')	
 	addDir('Creation Minute', 'https://www.youtube.com/playlist?list=PLvFrrGonrTSOO8_ZtChPQrBxx4MSla9Qb',2,'')
 	addDir('Creation Bytes', 'https://www.youtube.com/playlist?list=PLA2805B73D20F70D3',2,'')
 	addDir('Creation Seminars', 'https://www.youtube.com/playlist?list=PL6-cVj-ZRivqKeqAklhYfFFmmAdvwcnCT',2,'')	
@@ -29,45 +29,7 @@ def MAIN():
 
 ##################################################################################################################################
 
-def ADDLINKS(url):
-	link = getUrl(url)
-	match=re.compile('<span class="title"><a href="(.+?)"').findall(link)
-	title=re.compile('<span class="title"><a href=".+?" rel="bookmark" title=".+?">(.+?)</a></span>').findall(link)
-	thumb=re.compile('<img src="(.+?)" width="150" height="94" alt="" />').findall(link)
-	mylist=zip((match),(title),(thumb))
-	for url,title,thumb in mylist:
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
-		addDir(title, url, 10, thumb)
-
-##################################################################################################################################
-
-def ADDLINKS_Youtube_Playlist(url):
-	link = getUrl(url)
-	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
-	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
-	mylist=zip((match),(title))
-	for match,title in mylist:
-		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
-		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb)
-
-##################################################################################################################################
-
 def ADDLINKS_Creation_Today(url):
-	link = getUrl(url)
-	match=re.compile('<media:content url="http://player.vimeo.com/external/(.+?).sd').findall(link)
-	title=re.compile('<title>(.+?)</title>').findall(link)
-	del title[0]
-	del title[0]
-	del title[len(title)-1]
-	del match[len(match)-1]
-	mylist=zip((match),(title))
-	for url,title in mylist:
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
-		addon.add_video_item({'url': 'http://www.vimeo.com/' + url},{'title': title})
 	url='https://www.youtube.com/playlist?list=PLvFrrGonrTSNru0E3AEhBTTAsOvPxK5Q8'
 	link = getUrl(url)
 	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
@@ -94,6 +56,19 @@ def ADDLINKS_Creation_Today(url):
 	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
 	mylist=zip((match),(title))
 	for match,title in reversed(mylist):
+		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
+		title=title.replace("&#8211;","-")
+		title=title.replace("&#8217;","\'")
+		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb)
+
+##################################################################################################################################
+
+def ADDLINKS_Youtube_Playlist(url):
+	link = getUrl(url)
+	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
+	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
+	mylist=zip((match),(title))
+	for match,title in mylist:
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
 		title=title.replace("&#8211;","-")
 		title=title.replace("&#8217;","\'")
@@ -210,56 +185,23 @@ try:
 except:
         pass
 
-print "Mode: "+str(mode)
-print "URL: "+str(url)
-print "Name: "+str(name)
+xbmc.log("Mode: "+str(mode))
+xbmc.log("URL: "+str(url))
+xbmc.log("Name: "+str(name))
 
 if mode==None or url==None or len(url)<1:
-        print ""
+        xbmc.log ("")
         MAIN()
        
 elif mode==1:
-        print ""+url
-        ADDLINKS(url)
+        xbmc.log(""+url)
+        ADDLINKS_Creation_Today(url)
         
 elif mode==2:
-        print ""+url
+        xbmc.log(""+url)
         ADDLINKS_Youtube_Playlist(url)
 
-elif mode==3:
-        print ""+url
-        ADDLINKS_Youtube_Playlist(url)
 
-elif mode==4:
-        print ""+url
-        ADDLINKS_Creation_Today(url)
-
-elif mode==5:
-        print ""+url
-        PROGRAMS(url)
-
-elif mode==6:
-        print ""+url
-        RECENT(url)
-
-elif mode==7:
-        print ""+url
-        LIVE(url)
-
-elif mode==8:
-        print ""+url
-        SEARCH(url)
-
-elif mode==9:
-        print ""+url
-        AIRDATE(url)
-
-elif mode==10:
-        print ""+url
-        GETSOURCE(url,name,iconimage)
-elif mode==11:
-        print ""+url
-        PREVIOUS()
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
 

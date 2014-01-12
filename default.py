@@ -15,13 +15,11 @@ import urlresolver
 addon = Addon('plugin.video.creationtoday_org', sys.argv)
 net = Net()
 
-base_url = 'http://www.creationtoday.org'
-
 play = addon.queries.get('play', None)
 
 
 def MAIN():
-	addDir('Creation Today Show', '',1,'')	
+	addDir('Creation Today Show', 'http://www.creationtoday.org',1,'')	
 	addDir('Creation Minute', 'https://www.youtube.com/playlist?list=PLvFrrGonrTSOO8_ZtChPQrBxx4MSla9Qb',2,'')
 	addDir('Creation Bytes', 'https://www.youtube.com/playlist?list=PLA2805B73D20F70D3',2,'')
 	addDir('Creation Seminars', 'https://www.youtube.com/playlist?list=PL6-cVj-ZRivqKeqAklhYfFFmmAdvwcnCT',2,'')	

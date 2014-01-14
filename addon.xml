@@ -11,7 +11,7 @@
     <extension point="xbmc.addon.metadata">
 	<language />
         <summary>Creation Today</summary>
-        <description>Creation Today is a leading Christian-apologetics ministry, defending the literal interpretation of the Genesis creation account from the theory of evolution.[CR][CR]This add-on gives access to all of the videos available on creationtoday.org. This includes: The Creation Today Show, Creation Minute, Creation Bytes, and Kent Hovind's seminars and debates.</description>
+        <description>Creation Today is a leading Christian-apologetics ministry, defending the literal interpretation of the Genesis creation account from the theory of evolution.[CR][CR]This add-on gives access to all of the videos available on creationtoday.org. [CR][CR]The Creation Today Show, Creation Minute, Creation Bytes, and Kent Hovind's seminars and debates.</description>
         <platform>all</platform>
         <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
         <forum>http://forum.xbmc.org/showthread.php?tid=183376</forum>
@@ -19,4 +19,3 @@
 	<email>austinsojka@hotmail.com</email>
     </extension>
 </addon>
-

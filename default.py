@@ -14,7 +14,10 @@ import urlresolver
 
 addon = Addon('plugin.video.creationtoday_org', sys.argv)
 net = Net()
-
+settings = xbmcaddon.Addon( id = 'plugin.video.creationtoday_org' )
+fanart = os.path.join( settings.getAddonInfo( 'path' ), 'fanart.jpg' )
+icon = os.path.join( settings.getAddonInfo( 'path' ), 'icon.png' )
+xbmc.log('blah'+fanart)
 play = addon.queries.get('play', None)
 
 
@@ -37,7 +40,7 @@ def ADDLINKS_Creation_Today(url):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
 		title=title.replace("&#8211;","-")
 		title=title.replace("&#8217;","\'")
-		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb)
+		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 	url='https://www.youtube.com/playlist?list=PLvFrrGonrTSORF70pT4NyrLNVDfWZE4hu'
 	link = getUrl(url)
 	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
@@ -47,7 +50,7 @@ def ADDLINKS_Creation_Today(url):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
 		title=title.replace("&#8211;","-")
 		title=title.replace("&#8217;","\'")
-		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb)
+		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 	url='https://www.youtube.com/playlist?list=PLA5F3E0C0A891053E'
 	link = getUrl(url)
 	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
@@ -57,7 +60,7 @@ def ADDLINKS_Creation_Today(url):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
 		title=title.replace("&#8211;","-")
 		title=title.replace("&#8217;","\'")
-		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb)
+		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 
 ##################################################################################################################################
 
@@ -70,7 +73,7 @@ def ADDLINKS_Youtube_Playlist(url):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
 		title=title.replace("&#8211;","-")
 		title=title.replace("&#8217;","\'")
-		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb)
+		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 
 
 
@@ -94,32 +97,6 @@ def getUrl(url):
 
 ##################################################################################################################################
 
-def GETSOURCE(url,name,iconimage):
-	link = getUrl(url)
-	match=re.compile('<iframe src="http://player.vimeo.com/video/(.+?)title').findall(link)
-	site=0
-	if len(match)==0:
-		match=re.compile('src=".+?www.youtube.+?embed/(.+?)\?rel').findall(link)
-		site=1
-	if len(match)==0:
-		match=re.compile('src=".+?www.youtube.+?embed/(.+?)"').findall(link)
-		site=1
-	match=match[0]
-	if site==0:
-		match=addon.resolve_item({'url': 'http://www.vimeo.com/' + match})
-	if site==1:
-		match=addon.resolve_item({'url': 'http://www.youtube.com/watch?v=' + match})
-	liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
-	liz.setInfo(type="Video", infoLabels={ "title": name} )
-	xbmc.Player().play(match,liz)
-	xbmc.sleep(2500)
-	while xbmc.Player().isPlaying():
-		xbmc.sleep(250)
-	xbmc.Player().stop()
-	sys.exit()
-  
-##################################################################################################################################
-
 def get_params():
         param=[]
         paramstring=sys.argv[2]
@@ -137,23 +114,16 @@ def get_params():
                                 param[splitparams[0]]=splitparams[1]
                                 
         return param
-##################################################################################################################################
-	
 
-def addLink(name,url,iconimage):
-        ok=True
-        liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
-        return ok
 
 ##################################################################################################################################
 
 def addDir(name,url,mode,iconimage):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)
         ok=True
-        liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+        liz=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=icon)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	liz.setProperty( "Fanart_Image", fanart )
         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
 

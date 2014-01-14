@@ -7,8 +7,8 @@ import os
 import re
 import string
 import sys
-from addon import Addon
-from net import Net
+from t0mm0.common.addon import Addon
+from t0mm0.common.net import Net
 import urlresolver
 
 

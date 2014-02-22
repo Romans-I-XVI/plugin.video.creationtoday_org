@@ -10,6 +10,7 @@ import sys
 from t0mm0.common.addon import Addon
 from t0mm0.common.net import Net
 import urlresolver
+from bs4 import BeautifulSoup
 
 
 addon = Addon('plugin.video.creationtoday_org', sys.argv)
@@ -33,46 +34,50 @@ def MAIN():
 def ADDLINKS_Creation_Today(url):
 	url='https://www.youtube.com/playlist?list=PLvFrrGonrTSNru0E3AEhBTTAsOvPxK5Q8'
 	link = getUrl(url)
-	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
-	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
+	soup = BeautifulSoup(link)
+	title = soup.find_all("a", "pl-video-title-link")
+	match=re.compile('data-video-id="(.+?)"').findall(link)
 	mylist=zip((match),(title))
 	for match,title in reversed(mylist):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
+		title = title.contents
+		title = str(title[0])
 		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 	url='https://www.youtube.com/playlist?list=PLvFrrGonrTSORF70pT4NyrLNVDfWZE4hu'
 	link = getUrl(url)
-	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
-	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
+	soup = BeautifulSoup(link)
+	title = soup.find_all("a", "pl-video-title-link")
+	match=re.compile('data-video-id="(.+?)"').findall(link)
 	mylist=zip((match),(title))
 	for match,title in reversed(mylist):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
+		title = title.contents
+		title = str(title[0])
 		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 	url='https://www.youtube.com/playlist?list=PLA5F3E0C0A891053E'
 	link = getUrl(url)
-	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
-	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
+	soup = BeautifulSoup(link)
+	title = soup.find_all("a", "pl-video-title-link")
+	match=re.compile('data-video-id="(.+?)"').findall(link)
 	mylist=zip((match),(title))
 	for match,title in reversed(mylist):
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
+		title = title.contents
+		title = str(title[0])
 		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 
 ##################################################################################################################################
 
 def ADDLINKS_Youtube_Playlist(url):
 	link = getUrl(url)
-	match=re.compile('<a href=.+?watch\?v=(.+?)&amp.+?class="yt-uix-sessionlink"').findall(link)
-	title=re.compile('<a href=.+?watch.+?title="(.+?)" class="yt-uix-sessionlink"').findall(link)
+	soup = BeautifulSoup(link)
+	title = soup.find_all("a", "pl-video-title-link")
+	match=re.compile('data-video-id="(.+?)"').findall(link)
 	mylist=zip((match),(title))
 	for match,title in mylist:
 		thumb = "http://img.youtube.com/vi/"+match+"/0.jpg"
-		title=title.replace("&#8211;","-")
-		title=title.replace("&#8217;","\'")
+		title = title.contents
+		title = str(title[0])
 		addon.add_video_item({'url': 'http://www.youtube.com/watch?v=' + match},{'title': title},img=thumb,fanart=fanart)
 
 
